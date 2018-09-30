@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "group": "build",
+      "type": "shell",
+      "command":
+        "eosiocpp -o bin/mnist/mnist.wast mnist.cpp && eosiocpp -g bin/mnist/mnist.abi mnist.cpp",
+      "problemMatcher": []
+    },
+    {
+      "label": "create build folder",
+      "type": "shell",
+      "command":
+        "mkdir -p bin/mnist",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy",
+      "type": "shell",
+      "command": "cleos --wallet-url=http://localhost:8899/ -u http://jungle.cryptolions.io:18888 set contract exchangedop2 ./bin/mnist",
+      "problemMatcher": []
+    },
+    {
+      "label": "build & deploy",
+      "type": "shell",
+      "command": "eosiocpp -o bin/mnist/mnist.wast mnist.cpp && eosiocpp -g bin/mnist/mnist.abi mnist.cpp && cleos --wallet-url=http://localhost:8899/ -u http://jungle.cryptolions.io:18888 set contract exchangedop2 ./bin/mnist",
+      "problemMatcher": []
+    },
+    {
+      "label": "set_eosio_code",
+      "type": "shell",
+      "command": "cleos --wallet-url=http://localhost:8899/ -u http://localhost:8888/ set account permission exchangedop2 active '{\"threshold\": 1,\"keys\": [{\"key\": \"EOS5cMgd9hqvgaXEnzEEbX2tVr6FkpgvxpPYRgsxm8q3RAC3rJ2zH\",\"weight\": 1}],\"accounts\": [{\"permission\":{\"actor\":\"exchangedop2\",\"permission\":\"eosio.code\"},\"weight\":1}]}' owner -p exchangedop2",
+      "problemMatcher": []
+    }
+  ]
+}
+
+

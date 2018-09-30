@@ -11,8 +11,6 @@ const int n1 = width * height;  // = 784, without bias neuron
 const int n2 = 128;
 const int n3 = 10;  // Ten classes: 0 - 9
 
-double *in2, *out1, *out2, *in3, *out3;
-
 // 5 in (0,255)
 int testImg[28][28] = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -72,18 +70,16 @@ int testImg[28][28] = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
-void init_array() {
-  out1 = new double[n1];
+double sigmoid(double x) { return 1.0 / (1.0 + exp(-x)); }
+
+double* perceptron(double *input) {
+  double *in2, *out2, *in3, *out3;
   in2 = new double[n2];
   out2 = new double[n2];
   in3 = new double[n3];
   out3 = new double[n3];
-}
 
 
-double sigmoid(double x) { return 1.0 / (1.0 + exp(-x)); }
-
-void perceptron() {
   for (int i = 0; i < n2; ++i) {
     in2[i] = 0.0;
   }
@@ -94,7 +90,7 @@ void perceptron() {
 
   for (int i = 0; i < n1; ++i) {
     for (int j = 0; j < n2; ++j) {
-      in2[j] += out1[i] * w1_[i][j];
+      in2[j] += input[i] * w1_[i][j];
     }
   }
 
@@ -111,22 +107,26 @@ void perceptron() {
   for (int i = 0; i < n3; ++i) {
     out3[i] = sigmoid(in3[i]);
   }
+  return out3;
 }
 
-void input() {
+double *input(int img[28][28]) {
+  double* out1 = new double[n1];
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
       int pos = i + j * height;
-      out1[pos] = testImg[j][i] == 0 ? 0 : 1;
+      out1[pos] = img[j][i] == 0 ? 0 : 1;
     }
   }
+  return out1;
 }
 
-int main(int argc, char *argv[]) {
-  init_array();
-  input();
-  perceptron();
-  cout << "prediction: " << distance(out3, max_element(out3, out3 + n3))
-       << endl;
+int predict(int img[28][28]) {
+  double* preds = perceptron(input(img));
+  return distance(preds, max_element(preds, preds + n3));
+}
+
+int main() {
+  cout << "prediction: " << predict(testImg) << endl;
   return 0;
 }
